@@ -6,4 +6,11 @@
     <h1>Room</h1>
 </a>
 
+<form method="get" action="{% url 'home' %}">
+
+    <input type="text" name="q" placeholder="Search Rooms..." value="{{request.GET.q}}">
+
+    <input type="submit" value="Search">
+</form>
+
 <hr>

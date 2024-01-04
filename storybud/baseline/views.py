@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from .models import Room
+from .models import Room, Topic
 from .forms import RoomForm
+from django.db.models import Q
 '''
 rooms = [
     {'id': 1, 'name': 'Room 1', 'description': 'This is a room for COVID-19 patients'},
@@ -12,8 +13,21 @@ rooms = [
 
 
 def home(request):
-    rooms = Room.objects.all()
-    return render(request, 'baseline/home.html', {'rooms': rooms})
+    
+
+    q = request.GET.get('q')#consigue el valor de q en el url
+    if (not q):
+        q = ''
+
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains=q) | Q(name__icontains=q) | Q(description__icontains=q)
+    )#consigue los rooms que contengan q en el nombre, topico o descripcion
+    topics = Topic.objects.all()
+    rooms_count = rooms.count()
+
+
+
+    return render(request, 'baseline/home.html', {'rooms': rooms, 'topics': topics, 'rooms_count': rooms_count})
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
