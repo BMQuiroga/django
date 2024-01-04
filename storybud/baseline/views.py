@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Room
+from .forms import RoomForm
 '''
 rooms = [
     {'id': 1, 'name': 'Room 1', 'description': 'This is a room for COVID-19 patients'},
@@ -22,6 +23,38 @@ def room(request, pk):
     }
     return render(request, 'baseline/room.html', context)
 
+def createRoom(request):
+    form = RoomForm()
 
+    if request.method == 'POST':
+        #print(request.POST)
+        form = RoomForm(request.POST)#mete el json en un objeto RoomForm
+        if form.is_valid():
+            form.save()
+            return redirect('/')
 
-# Create your views here.
+    context = {'form': form}
+    return render(request, 'baseline/room_form.html', context)
+
+def updateRoom(request, pk):
+    room = Room.objects.get(id=pk)#consigue el Room por id
+    form = RoomForm(instance=room)#hace que los valores default del form coincidan con los del Room
+
+    if request.method == 'POST':
+        form = RoomForm(request.POST, instance=room)#mete el json en un objeto RoomForm, el instance=room para que actualize en vez de postear un new
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form': form}
+    return render(request, 'baseline/room_form.html', context)
+
+def deleteRoom(request, pk):
+    room = Room.objects.get(id=pk)
+    if request.method == 'POST':
+        room.delete()
+        return redirect('/')
+
+    #context = {'item': room}
+    #return render(request, 'baseline/room_.html', context)
+    return render(request, 'baseline/delete.html', {'obj': room})
