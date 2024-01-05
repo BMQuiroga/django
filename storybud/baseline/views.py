@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Room, Topic
+from .models import Room, Topic, Message
 from .forms import RoomForm
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -41,7 +41,13 @@ def room(request, pk):
     room_messages = room.message_set.all().order_by('-created')#consigue todos los mensajes del room y los ordena por fecha
     #notacion: room.message_set.all() es lo mismo que Message.objects.filter(room=room)
 
-
+    if request.method == 'POST':
+        message = Message.objects.create(
+            user=request.user,
+            room=room,
+            body=request.POST.get('body')
+        )
+        return redirect('room', pk=room.id)
 
 
     context = {
