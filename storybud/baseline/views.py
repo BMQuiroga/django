@@ -52,7 +52,8 @@ def room(request, pk):
 
     context = {
         'room': room,
-        'room_messages': room_messages
+        'room_messages': room_messages,
+        'participants': room.participants.all()
     }
     return render(request, 'baseline/room.html', context)
 

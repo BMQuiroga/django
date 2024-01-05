@@ -1,33 +1,59 @@
 {% extends "boilerplate.html" %}
 
 {% block content %}
-<h1>{{room.name}}</h1>
-<h1> {{room.description}}</h1>
 
-<div class="comments">
-    <h3>Comments:</h3>
-    <hr>
-    {% for comment in room_messages %}
+<style>
+
+    .room-container {
+
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+
+    }
+</style>
+
+
+<div class="room-container">
 
     <div>
-    <h3>@{{comment.user.username}} - {{comment.created}} ({{comment.created|timesince}} ago)</h3>
-    <h1>{{comment.body}}</h1>
-    <hr>
+        <h1>{{room.name}}</h1>
+        <h1> {{room.description}}</h1>
+
+        <div class="comments">
+            <h3>Comments:</h3>
+            <hr>
+            {% for comment in room_messages %}
+
+            <div>
+            <h3>@{{comment.user.username}} - {{comment.created}} ({{comment.created|timesince}} ago)</h3>
+            <h1>{{comment.body}}</h1>
+            <hr>
+            </div>
+
+            {% endfor %}
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <div class="comment-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="text" name="body" placeholder="Add new comment"/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+        {% endif %}
     </div>
 
-    {% endfor %}
+    <div>
+        <h3>Members:</h3>
+        <hr>
+        {% for member in participants %}
+        <h3>@{{member.username}}</h3>
+        <hr>
+        {% endfor %}
+    </div>
 </div>
-
-{% if request.user.is_authenticated %}
-<div class="comment-form">
-    <form method="POST" action="">
-        {% csrf_token %}
-        {{form.as_p}}
-        <input type="text" name="body" placeholder="Add new comment"/>
-        <input type="submit" value="Submit"/>
-    </form>
-</div>
-{% endif %}
 
 
 {% endblock content %}
