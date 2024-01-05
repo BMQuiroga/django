@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.contrib.auth.forms import UserCreationForm
 '''
 rooms = [
     {'id': 1, 'name': 'Room 1', 'description': 'This is a room for COVID-19 patients'},
@@ -95,7 +96,7 @@ def loginPage(request):
         return redirect('/')
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        username = request.POST.get('username').lower()
         password = request.POST.get('password')
         #user = authenticate(request, username=username, password=password)
         try:
@@ -119,5 +120,23 @@ def logoutUser(request):
     return redirect('/')
 
 def registerPage(request):
-    context = {'page': 'register'}
+
+    if request.user.is_authenticated:
+        return redirect('/')
+
+    form = UserCreationForm()
+
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)#mete el json en un objeto RoomForm
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.username = form.cleaned_data.get('username')
+            user.save()
+            login(request, user)
+            return redirect('/')
+        else:
+            messages.error(request, 'An error has ocurred during registration')
+
+    context = {'page': 'register', 'form': form}
     return render(request, 'baseline/login_register.html', context)
