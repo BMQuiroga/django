@@ -1,7 +1,22 @@
 {% extends "boilerplate.html" %}
 
 {% block content %}
-<h1>Hola soy el room</h1>
+<h1>{{room.name}}</h1>
 <h1> {{room.description}}</h1>
+
+<div class="comments">
+    <h3>Comments:</h3>
+    <hr>
+    {% for comment in room_messages %}
+
+    <div>
+    <h3>@{{comment.user.username}} - {{comment.created}} ({{comment.created|timesince}} ago)</h3>
+    <h1>{{comment.body}}</h1>
+    <hr>
+    </div>
+
+    {% endfor %}
+</div>
+
 
 {% endblock content %}

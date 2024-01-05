@@ -38,9 +38,15 @@ def home(request):
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    
+    room_messages = room.message_set.all().order_by('-created')#consigue todos los mensajes del room y los ordena por fecha
+    #notacion: room.message_set.all() es lo mismo que Message.objects.filter(room=room)
+
+
+
+
     context = {
-        'room': room
+        'room': room,
+        'room_messages': room_messages
     }
     return render(request, 'baseline/room.html', context)
 
