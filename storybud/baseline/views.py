@@ -5,6 +5,8 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 '''
 rooms = [
     {'id': 1, 'name': 'Room 1', 'description': 'This is a room for COVID-19 patients'},
@@ -41,6 +43,7 @@ def room(request, pk):
     }
     return render(request, 'baseline/room.html', context)
 
+@login_required(login_url='loginPage')
 def createRoom(request):
     form = RoomForm()
 
@@ -54,9 +57,13 @@ def createRoom(request):
     context = {'form': form}
     return render(request, 'baseline/room_form.html', context)
 
+@login_required(login_url='loginPage')
 def updateRoom(request, pk):
     room = Room.objects.get(id=pk)#consigue el Room por id
     form = RoomForm(instance=room)#hace que los valores default del form coincidan con los del Room
+
+    if request.user != room.host:
+        return HttpResponse('You are not allowed here!')
 
     if request.method == 'POST':
         form = RoomForm(request.POST, instance=room)#mete el json en un objeto RoomForm, el instance=room para que actualize en vez de postear un new
@@ -67,8 +74,13 @@ def updateRoom(request, pk):
     context = {'form': form}
     return render(request, 'baseline/room_form.html', context)
 
+@login_required(login_url='loginPage')
 def deleteRoom(request, pk):
     room = Room.objects.get(id=pk)
+
+    if request.user != room.host:
+        return HttpResponse('You are not allowed here!')
+
     if request.method == 'POST':
         room.delete()
         return redirect('/')
@@ -78,6 +90,9 @@ def deleteRoom(request, pk):
     return render(request, 'baseline/delete.html', {'obj': room})
 
 def loginPage(request):
+
+    if request.user.is_authenticated:
+        return redirect('/')
 
     if request.method == 'POST':
         username = request.POST.get('username')
