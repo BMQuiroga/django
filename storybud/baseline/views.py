@@ -111,9 +111,13 @@ def loginPage(request):
         else:
             messages.error(request, 'Username OR password is incorrect')
 
-    context = {}
+    context = {'page': 'login'}
     return render(request, 'baseline/login_register.html', context)
 
 def logoutUser(request):
     logout(request)
     return redirect('/')
+
+def registerPage(request):
+    context = {'page': 'register'}
+    return render(request, 'baseline/login_register.html', context)
