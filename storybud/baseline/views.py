@@ -47,7 +47,10 @@ def room(request, pk):
             room=room,
             body=request.POST.get('body')
         )
+        room.participants.add(request.user)#agrega el usuario a la lista de participantes del room
         return redirect('room', pk=room.id)
+
+
 
 
     context = {
@@ -153,3 +156,18 @@ def registerPage(request):
 
     context = {'page': 'register', 'form': form}
     return render(request, 'baseline/login_register.html', context)
+
+@login_required(login_url='loginPage')
+def deleteMsg(request, pk):
+    msg = Message.objects.get(id=pk)
+
+    #comment = request.POST.get('comment')
+
+    if request.user != msg.user:
+        return HttpResponse('You are not allowed here!')
+
+    if request.method == 'POST':
+        msg.delete()
+        return redirect('/')
+
+    return render(request, 'baseline/delete.html', {'obj': msg})
