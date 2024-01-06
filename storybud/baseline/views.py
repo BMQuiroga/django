@@ -32,13 +32,15 @@ def home(request):
     topics = Topic.objects.all()
     rooms_count = rooms.count()
 
+    room_messages = Message.objects.all()#consigue todos los mensajes del room y los ordena por fecha
 
 
-    return render(request, 'baseline/home.html', {'rooms': rooms, 'topics': topics, 'rooms_count': rooms_count})
+
+    return render(request, 'baseline/home.html', {'rooms': rooms, 'topics': topics, 'rooms_count': rooms_count, 'room_messages': room_messages})
 
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    room_messages = room.message_set.all().order_by('-created')#consigue todos los mensajes del room y los ordena por fecha
+    room_messages = room.message_set.all()#consigue todos los mensajes del room y los ordena por fecha
     #notacion: room.message_set.all() es lo mismo que Message.objects.filter(room=room)
 
     if request.method == 'POST':

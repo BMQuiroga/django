@@ -2,10 +2,6 @@
     <h1>Back</h1>
 </a>
 
-<a href="/room">
-    <h1>Room</h1>
-</a>
-
 <form method="get" action="{% url 'home' %}">
 
     <input type="text" name="q" placeholder="Search Rooms..." value="{{request.GET.q}}">
