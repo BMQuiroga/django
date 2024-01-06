@@ -1,9 +1,9 @@
-<h3>Recent Activity</h3>
+<h1>Recent Activity</h1>
 <hr>
     
     {% for m in room_messages %}
         <div>
-            <h3>@{{m.user.username}} - {{m.created}} ({{m.created|timesince}} ago)</h3>
+            <h3><a href="{% url 'user-profile' m.user.id %}">@{{m.user.username}}</a> - {{m.created}} ({{m.created|timesince}} ago)</h3>
             
             <h1>{{m.body}}</h1>
             <small>in {{m.room}}</small>

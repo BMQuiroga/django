@@ -39,7 +39,10 @@ def home(request):
         else:
             room_messages = Message.objects.filter(Q(room__topic__name__icontains=q) & Q(room__participants__in=[request.user]))
     else:
-        room_messages = []
+        if (q == ''):
+            room_messages = Message.objects.all()
+        else:
+            room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
 
     return render(request, 'baseline/home.html', {'rooms': rooms, 'topics': topics, 'rooms_count': rooms_count, 'room_messages': room_messages})
 
@@ -178,3 +181,20 @@ def deleteMsg(request, pk):
         return redirect('/')
 
     return render(request, 'baseline/delete.html', {'obj': msg})
+
+def userProfile(req, pk):
+    user = User.objects.get(id=pk)
+
+    rooms = user.participants.all()
+
+    room_messages = user.message_set.all()
+
+    topics = Topic.objects.all()
+
+    context = {
+        'user': user,
+        'rooms': rooms,
+        'room_messages': room_messages,
+        'topics': topics
+    }
+    return render(req, 'baseline/profile.html', context)
