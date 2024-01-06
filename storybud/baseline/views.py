@@ -32,9 +32,14 @@ def home(request):
     topics = Topic.objects.all()
     rooms_count = rooms.count()
 
-    room_messages = Message.objects.all()#consigue todos los mensajes del room y los ordena por fecha
-
-
+    #room_messages = Message.objects.filter(Q(room__topic__name=q))#consigue los mensajes que contengan q en el nombre, topico o descripcion
+    if (request.user):
+        if (q == ''):
+            room_messages = Message.objects.filter(Q(room__participants__in=[request.user]))
+        else:
+            room_messages = Message.objects.filter(Q(room__topic__name__icontains=q) & Q(room__participants__in=[request.user]))
+    else:
+        room_messages = []
 
     return render(request, 'baseline/home.html', {'rooms': rooms, 'topics': topics, 'rooms_count': rooms_count, 'room_messages': room_messages})
 
