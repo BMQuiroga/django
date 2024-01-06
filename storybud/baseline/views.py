@@ -78,7 +78,9 @@ def createRoom(request):
         #print(request.POST)
         form = RoomForm(request.POST)#mete el json en un objeto RoomForm
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('/')
 
     context = {'form': form}
