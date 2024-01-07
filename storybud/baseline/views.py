@@ -33,7 +33,7 @@ def home(request):
     rooms_count = rooms.count()
 
     #room_messages = Message.objects.filter(Q(room__topic__name=q))#consigue los mensajes que contengan q en el nombre, topico o descripcion
-    if (request.user):
+    if (request.user.is_authenticated):
         if (q == ''):
             room_messages = Message.objects.filter(Q(room__participants__in=[request.user]))
         else:
