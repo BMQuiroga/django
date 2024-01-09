@@ -75,15 +75,18 @@ def createRoom(request):
     form = RoomForm()
 
     if request.method == 'POST':
-        #print(request.POST)
-        form = RoomForm(request.POST)#mete el json en un objeto RoomForm
-        if form.is_valid():
-            room = form.save(commit=False)
-            room.host = request.user
-            room.save()
-            return redirect('/')
 
-    context = {'form': form}
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+        Room.objects.create(
+            host=request.user,
+            topic=topic,
+            name=request.POST.get('name'),#'name' es el name del input en el html
+            description=request.POST.get('description')
+        )
+        return redirect('/')
+
+    context = {'form': form, 'topics': Topic.objects.all()}
     return render(request, 'baseline/room_form.html', context)
 
 @login_required(login_url='loginPage')
@@ -95,12 +98,20 @@ def updateRoom(request, pk):
         return HttpResponse('You are not allowed here!')
 
     if request.method == 'POST':
-        form = RoomForm(request.POST, instance=room)#mete el json en un objeto RoomForm, el instance=room para que actualize en vez de postear un new
-        if form.is_valid():
-            form.save()
-            return redirect('/')
 
-    context = {'form': form}
+        topic_name = request.POST.get('topic')
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+
+
+        #form = RoomForm(request.POST, instance=room)#mete el json en un objeto RoomForm, el instance=room para que actualize en vez de postear un new
+        room.name = request.POST.get('name')
+        room.topic = topic
+        room.description = request.POST.get('description')
+        room.save()
+
+        return redirect('room', pk=room.id)
+
+    context = {'form': form, 'topics': Topic.objects.all(), 'room': room}
     return render(request, 'baseline/room_form.html', context)
 
 @login_required(login_url='loginPage')
