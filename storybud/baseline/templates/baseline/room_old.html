@@ -1,0 +1,66 @@
+{% extends "boilerplate.html" %}
+
+{% block content %}
+
+<style>
+
+    .room-container {
+
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+
+    }
+</style>
+
+
+<div class="room-container">
+
+    <div>
+        <h1>{{room.name}}</h1>
+        <h1> {{room.description}}</h1>
+
+        <div class="comments">
+            <h3>Comments:</h3>
+            <hr>
+            {% for comment in room_messages %}
+
+            <div>
+            <h3>@{{comment.user.username}} - {{comment.created}} ({{comment.created|timesince}} ago)
+                {% if request.user == comment.user %}
+                <a href="{% url 'delete-msg' comment.id %}">Delete</a>
+                {% endif %}
+            </h3>
+            <h1>{{comment.body}}</h1>
+            <hr>
+            </div>
+
+            {% endfor %}
+        </div>
+
+        {% if request.user.is_authenticated %}
+        <div class="comment-form">
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="text" name="body" placeholder="Add new comment"/>
+                <input type="submit" value="Submit"/>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div>
+        <h3>Members:</h3>
+        <hr>
+        {% for member in participants %}
+        <h3>@{{member.username}}
+            
+        </h3>
+        <hr>
+        {% endfor %}
+    </div>
+
+</div>
+
+
+{% endblock content %}
