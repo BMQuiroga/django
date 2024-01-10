@@ -227,3 +227,11 @@ def updateUser(req):
         'form': form
     }
     return render(req, 'baseline/update-user.html', context)
+
+def topicsPage(req):
+    topics = Topic.objects.all()
+
+    context = {
+        'topics': topics
+    }
+    return render(req, 'baseline/topics.html', context)
