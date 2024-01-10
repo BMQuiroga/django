@@ -1,0 +1,44 @@
+{% extends 'boilerplate.html' %}
+
+{% block content %}
+
+{% if page == 'login' %}
+<div>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <label for="username">Username:</label>
+        <input type="text" name="username" placeholder="Username">
+
+        <label for="password">Password:</label>
+        <input type="password" name="password" placeholder="Password">
+
+
+        <input type="submit" value="Login">
+
+    </form>
+
+    <p>Don't have an account? <a href="{% url 'registerPage' %}">Register</a></p>
+
+</div>
+
+{% elif page == 'register' %}
+
+<div>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        {{form.as_p}}
+
+
+        <input type="submit" value="Register">
+
+    </form>
+
+    <p>Already have an account? <a href="{% url 'loginPage' %}">Login</a></p>
+
+</div>
+
+{% endif %}
+
+{% endblock content %}
