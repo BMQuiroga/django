@@ -243,3 +243,10 @@ def topicsPage(req):
         'topics': topics
     }
     return render(req, 'baseline/topics.html', context)
+
+def activityPage(req):
+    room_messages = Message.objects.all()
+    context = {
+        'room_messages': room_messages
+    }
+    return render(req, 'baseline/activity.html', context)
