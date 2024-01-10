@@ -29,7 +29,7 @@
               </div>
               <p>
                 @{{m.user.username}}
-                <span> {{m.created|timesince}} ago</span>
+                <span>{{m.created}} ({{m.created|timesince}} ago)</span>
               </p>
             </a>
             {% if request.user == m.user %}
