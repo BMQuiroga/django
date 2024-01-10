@@ -29,7 +29,7 @@ def home(request):
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) | Q(name__icontains=q) | Q(description__icontains=q)
     )#consigue los rooms que contengan q en el nombre, topico o descripcion
-    topics = Topic.objects.all()
+    topics = Topic.objects.all()[0:5]
     rooms_count = rooms.count()
 
     #room_messages = Message.objects.filter(Q(room__topic__name=q))#consigue los mensajes que contengan q en el nombre, topico o descripcion
@@ -230,6 +230,14 @@ def updateUser(req):
 
 def topicsPage(req):
     topics = Topic.objects.all()
+
+    q = req.GET.get('q')#consigue el valor de q en el url
+    if (not q):
+        q = ''
+
+    topics = Topic.objects.filter(name__icontains=q)#consigue los topics que contengan q en el nombre
+
+
 
     context = {
         'topics': topics
