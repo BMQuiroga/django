@@ -1,8 +1,13 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+#from django.contrib.auth.models import User
 
 # Create your models here.
 
+class User(AbstractUser):
+    pass
+
+'''
 class Topic(models.Model):
     name = models.CharField(max_length=100)
     
@@ -36,4 +41,4 @@ class Message(models.Model):
         ordering = ['-updated', '-created'] #como se muestran los rooms en la pagina principal
     
     def __str__(self):
-        return self.body[0:50]
+        return self.body[0:50]'''
