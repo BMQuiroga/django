@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from .models import Room, Topic, Message, User
-from .forms import RoomForm, UserForm
+from .forms import RoomForm, UserForm, MyUserCreationForm
 from django.db.models import Q
 #from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.contrib.auth.forms import UserCreationForm
+#from django.contrib.auth.forms import UserCreationForm
 '''
 rooms = [
     {'id': 1, 'name': 'Room 1', 'description': 'This is a room for COVID-19 patients'},
@@ -163,10 +163,10 @@ def registerPage(request):
     if request.user.is_authenticated:
         return redirect('/')
 
-    form = UserCreationForm()
+    form = MyUserCreationForm()
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)#mete el json en un objeto RoomForm
+        form = MyUserCreationForm(request.POST)#mete el json en un objeto RoomForm
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
