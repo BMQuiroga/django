@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
-    name = models.CharField(null=True, max_length=255)
+    name = models.CharField(null=True, max_length=255, unique=True)
     email = models.EmailField(unique=True, null=True)
     bio = models.TextField(null=True, blank=True)
     avatar = models.ImageField(null=True, default='avatar.svg')
