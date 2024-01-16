@@ -218,7 +218,7 @@ def updateUser(req):
     form = UserForm(instance=user)
 
     if req.method == 'POST':
-        form = UserForm(req.POST, instance=user)
+        form = UserForm(req.POST, req.FILES, instance=user)
         if form.is_valid():
             form.save()
             return redirect('user-profile', pk=user.id)
