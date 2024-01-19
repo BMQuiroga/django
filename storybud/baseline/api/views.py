@@ -1,8 +1,11 @@
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from baseline.models import Room, User, Message
 from .serializers import RoomSerializer, UserSerializer, MessageSerializer
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -52,3 +55,19 @@ def getMessages(request, pk):
     serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, BasicAuthentication])  # Use the authentication classes you need
+@permission_classes([IsAuthenticated])  # Ensure the user is authenticated
+def publishMessage(request, pk):
+    try:
+        room = Room.objects.get(id=pk)
+    except Room.DoesNotExist:
+        return Response({'error': 'Room not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    data = {'body': request.data.get('body'), 'user': request.user.pk, 'room': room.pk}
+
+    serializer = MessageSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
